@@ -1,82 +1,80 @@
-# Camera-Workflow
+<div align="center">
 
-Camera-Workflow is a single monorepo that combines:
+# 🎬 Dailies
 
-- A **Go engine** (`media-converter`) for media preparation and copy-safe workflows.
-- A **Raycast UI** (`apps/raycast`) that orchestrates runs and shows live reports.
+**Prepare your camera footage safely, in one click.**
 
-The Raycast extension is UI-only. All conversion logic lives in Go.
+![Go](https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go&logoColor=white)
+![Raycast](https://img.shields.io/badge/Raycast-extension-FF6363?logo=raycast&logoColor=white)
+![macOS](https://img.shields.io/badge/macOS-only-333)
 
-## Repository Structure
+</div>
 
-- `main.go`, `cmd/`, `internal/`: Go engine.
-- `apps/raycast/`: Raycast extension.
-- `scripts/build-raycast-binaries.sh`: Builds embedded macOS binaries for Raycast.
-- `Makefile`: Unified developer entrypoints.
+## ✨ What it does
 
-## Product Naming Conventions
+- 🎥 **Prepare** video and photos into a clean **Prepared Library**
+- 🛡️ **Copy-safe**: your originals are never touched
+- 👀 **Dry-run first**: see what will happen before anything is written
+- 📊 **Live reports**: follow each run, then read the Backup Report
 
-- Prepare (not convert) in user-facing Raycast copy.
-- Prepared Library (not output folder).
-- Backup Report (not run summary).
-- Backup Preparation Run (not generic run).
+## 🧭 How it works
 
-## Requirements
-
-- Go `1.21+`
-- Node.js `18+`
-- Raycast (macOS)
-- System tools for conversion:
-  - `ffmpeg`
-  - `ffprobe`
-  - `magick` (ImageMagick)
-
-## Quickstart (Monorepo)
-
-```bash
-# 1) Run Go tests
-make test
-
-# 2) Build embedded binaries for Raycast
-make raycast-binaries
-
-# 3) Install Raycast extension dependencies
-make raycast-install
-
-# 4) Start extension in Raycast dev mode
-make raycast-dev
+```mermaid
+flowchart LR
+  A[📇 Source folder] --> B[⚙️ Go engine<br/>media-converter]
+  B --> C[📁 Prepared Library]
+  D[🖥️ Raycast UI] -- runs --> B
+  B -- live report --> D
 ```
 
-## Go Engine Usage (CLI)
+The Raycast UI only orchestrates. All the work happens in the Go engine.
+
+## 🚀 Quick start
+
+**1. Install the tools** (once):
 
 ```bash
-# Dry-run
-./media-converter --dry-run /path/source /path/destination
-
-# Real run
-./media-converter /path/source /path/destination
-
-# Copy-only archive mode
-./media-converter --copy-only /path/source /path/destination
+brew install go node ffmpeg imagemagick
 ```
 
-## Raycast Extension
+**2. Launch the Raycast extension:**
 
-The extension resolves `media-converter` from embedded assets first:
+```bash
+make raycast-binaries   # build the engine for Raycast
+make raycast-install    # install extension dependencies
+make raycast-dev        # start it in Raycast dev mode
+```
 
-- `apps/raycast/assets/bin/media-converter-darwin-arm64`
-- `apps/raycast/assets/bin/media-converter-darwin-amd64`
+## ⌨️ Command line
 
-For development only, PATH fallback can be enabled explicitly with:
+```bash
+./media-converter --dry-run SOURCE DEST    # preview only, writes nothing
+./media-converter SOURCE DEST              # prepare the library
+./media-converter --copy-only SOURCE DEST  # archive copy, no conversion
+```
+
+## 🧑‍💻 For developers
+
+<details>
+<summary>Repo layout, tests and naming conventions</summary>
+
+- `main.go`, `cmd/`, `internal/`: Go engine
+- `apps/raycast/`: Raycast extension (UI only)
+- `scripts/build-raycast-binaries.sh`: builds the macOS binaries
+- `Makefile`: all dev commands
+
+Run the tests with `make test`.
+
+Dev only: fall back to a `media-converter` on your PATH:
 
 ```bash
 export CAMERA_WORKFLOW_ALLOW_PATH_FALLBACK=1
 ```
 
-See the extension-specific docs in `apps/raycast/README.md`.
+Extension docs: [`apps/raycast/README.md`](apps/raycast/README.md)
 
-## Release Model
+**Naming:** say *Prepare* (not convert) · *Prepared Library* (not output folder) · *Backup Report* (not run summary) · *Backup Preparation Run* (not generic run).
 
-- Canonical repository: `Azilone/Camera-Workflow`
-- New releases are published from this monorepo.
-- Legacy repositories are archived and redirect to this one.
+**Releases:** published from this repo. The legacy Camera-Workflow repos are archived and redirect here.
+
+</details>
